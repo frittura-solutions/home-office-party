@@ -1,0 +1,6 @@
+#costantino.frittura.org
+localhost
+
+root ./static
+file_server
+reverse_proxy /rtc/* 127.0.0.1:3033
