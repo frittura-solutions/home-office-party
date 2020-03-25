@@ -13,15 +13,15 @@ const getCredentials = (keyDir = "./certificates") => {
         console.log(err);
     }
     return {
-        privateKey: privateKey,
-        certificate: certificate
+        key: privateKey,
+        cert: certificate
     }
 
 }
 
 const log = txt => {
     	const tag = "[Stats " + Date() + "] ";
-        // additional argument are appended to string
+        //additional argument are appended to string
         for (var i = 1; i < arguments.length; i++) {
             txt += "  " + arguments[i];
         }
