@@ -38,10 +38,14 @@ class Hub {
                 }
             });
         });
+        // print statistics every few minute
+        const intervalStats = setInterval(this.printStats, STATS_INTERVAL_MINS * 60 * 1000);
+        // clean-up dead rooms
+        const intervalClean = setInterval(this.cleanUp, CLEAN_INTERVAL_MINS * 60 * 1000);
     }
 
     printStats() {
-        log("number of clients of webserver: ", wss.clients.length);
+        //log("number of clients of webserver: ", this.wss.clients.length);
         log("Number of rooms: ", this.rooms);
         log(" == Rooms: ==");
         for (const [name, room] of Object.entries(this.rooms)) {

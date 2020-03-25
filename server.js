@@ -20,7 +20,7 @@ app.get('/status', (req, res) => {
 });
 app.use(express.static('static'));
 const apiProxy = httpProxy.createProxyServer();
-const stunServer = 'http://localhost:3478';
+const stunServer = 'https://localhost:3478';
  
 app.all("/stun/*", (req, res) => {
     console.log('redirecting to stun server');
@@ -34,12 +34,5 @@ const server = httpsServer.listen(port, () => {
     console.log('node.js static server listening on port: ' + port + ", with websockets listener")
 })
 var hub = new Hub(server);
-
-
-
-// // print statistics every few minute
-// const intervalStats = setInterval(hub.printStats, STATS_INTERVAL_MINS * 60 * 1000);
-// // clean-up dead rooms
-// const intervalClean = setInterval(hub.cleanUp, CLEAN_INTERVAL_MINS * 60 * 1000);
 
 
