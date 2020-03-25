@@ -20,7 +20,7 @@ app.get('/status', (req, res) => {
 });
 app.use(express.static('static'));
 const apiProxy = httpProxy.createProxyServer();
-const stunServer = 'https://localhost:3478';
+const stunServer = 'stun://localhost:3478';
  
 app.all("/stun/*", (req, res) => {
     console.log('redirecting to stun server');
@@ -34,5 +34,3 @@ const server = httpsServer.listen(port, () => {
     console.log('node.js static server listening on port: ' + port + ", with websockets listener")
 })
 var hub = new Hub(server);
-
-
