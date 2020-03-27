@@ -31,7 +31,7 @@ class Hub {
                         this.handleLeave(msg)
                         break;
                     case 'message':
-                        this.handleMessage(msg)
+                        this.handleMessage(ws, msg)
                         break;
                     default:
                         log(`Unknown message type ${msg.type}`);
@@ -45,8 +45,8 @@ class Hub {
     }
 
     printStats() {
-        console.log("number of clients of webserver: ", this.wss.clients.length);
-        console.log("Number of rooms: ", this.rooms);
+        log("number of clients of webserver: ", this.wss.clients.length);
+        log("Number of rooms: ", this.rooms);
         log(" == Rooms: ==");
         for (const [name, room] of Object.entries(this.rooms)) {
             log(" name: ", room.name);
@@ -73,7 +73,7 @@ class Hub {
 
     sendTo(connection, message) {
         var msg = JSON.stringify(message);
-        connection.send(msg);
+        //connection.send(msg);
         if (connection.readyState === WebSocket.OPEN) {
             connection.send(msg);
         }
@@ -109,26 +109,34 @@ class Hub {
 
             // save connection
             const id = uuid.v4();
-            room.users[id] = msg.user;
+            let username = msg.user;
+            //Check uniqueness of username in users
+            
+            room.users[id] = username;
             room.connections[id] = ws;
-            this.sendToAll({
-                type: "notification",
-                room: msg.room,
-                user: msg.user,
-                action: "join",
-                data: `${msg.user} joined the conversation.`
-            });
             // send new user the transcript of the conversation
             // and tell him his ID and the names of the other connected users
             let userNames = [];
             for (var userID in room.users) {
                 userNames.push(room.users[userID]);
             }
+            // if (userNames.indexOf(username) >= 0) {
+            //     username = username + "_1"
+            // }
+            
+            this.sendToAll({
+                type: "notification",
+                room: msg.room,
+                user: username,
+                action: "join",
+                data: `${msg.user} joined the conversation.`
+            });
             this.sendTo(ws, {
                 id: id,
                 type: "transcript",
                 data: room.transcript,
-                users: userNames
+                users: userNames,
+                user: username
             });
         }
     }
@@ -151,7 +159,7 @@ class Hub {
         }
     }
 
-    handleMessage(msg) {
+    handleMessage(ws, msg) {
         // User sent a JSON string with a message to all other users:
         //   {"type": "message", "user": "<real name of user>", "id": "<The user ID obtained during login>", "data": "<The message sent to the group>"}
         console.log("message " + msg);
